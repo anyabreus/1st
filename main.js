@@ -18,6 +18,8 @@ const player2 = {
     }
 };
 
+const arenas = document.querySelector('.arenas');
+
 function createPlayer(playerNumber, playerOject) {
     const player = document.createElement('div');
     const progressBar = document.createElement('div');
@@ -32,7 +34,7 @@ function createPlayer(playerNumber, playerOject) {
     life.classList.add('life');
     name.classList.add('name');
 
-    document.querySelector('div.arenas').appendChild(player);
+    arenas.appendChild(player);
 
     player.appendChild(progressBar);
     player.appendChild(character);

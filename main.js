@@ -1,6 +1,10 @@
-const player1 = {
+const arenas = document.querySelector('.arenas');
+const randomButton = document.querySelector('.button');
+
+const sonya = {
+    player: 1,
     name: 'Sonya',
-    hp: 95,
+    hp: 100,
     img: 'http://reactmarathon-api.herokuapp.com/assets/sonya.gif',
     weapon: ['knife', 'gun'],
     attack: function() {
@@ -8,9 +12,10 @@ const player1 = {
     }
 };
 
-const player2 = {
+const kitana = {
+    player: 2,
     name: 'Kitana',
-    hp: 70,
+    hp: 100,
     img: 'http://reactmarathon-api.herokuapp.com/assets/kitana.gif',
     weapon: ['knife', 'gun'],
     attack: function() {
@@ -18,23 +23,21 @@ const player2 = {
     }
 };
 
-const arenas = document.querySelector('.arenas');
+function createElement(tagName, className) {
+    const tag = document.createElement(tagName);
+    if(className) {
+        tag.classList.add(className);
+    }
+    return tag;
+};
 
-function createPlayer(playerNumber, playerOject) {
-    const player = document.createElement('div');
-    const progressBar = document.createElement('div');
-    const character = document.createElement('div');
-    const life = document.createElement('div');
-    const name = document.createElement('div');
-    const img = document.createElement('img');
-
-    player.classList.add(playerNumber);
-    progressBar.classList.add('progressbar');
-    character.classList.add('character');
-    life.classList.add('life');
-    name.classList.add('name');
-
-    arenas.appendChild(player);
+function createPlayer(playerOject) {
+    const player = createElement('div', 'player'+playerOject.player);
+    const progressBar = createElement('div', 'progressbar');
+    const character = createElement('div', 'character');
+    const life = createElement('div', 'life');
+    const name = createElement('div', 'name');
+    const img = createElement('img');
 
     player.appendChild(progressBar);
     player.appendChild(character);
@@ -48,12 +51,61 @@ function createPlayer(playerNumber, playerOject) {
     name.innerText = playerOject.name;
     img.src = playerOject.img;
 
-    // для варианта с одним аргументом, но по поводу eval слышала, что применять не стоит.
-    // life.style.width = eval(playerNumber).hp + '%';
-    // name.innerText = eval(playerNumber).name;
-    // img.src = eval(playerNumber).img;
+    return player;
 };
 
-createPlayer('player1', player1);
-createPlayer('player2', player2);
+randomButton.addEventListener('click', function() {
+    changeHp(sonya);
+    changeHp(kitana);
+    
+    checkWin(sonya);
+    checkWin(kitana);
+});
+
+// function playerLose(name) {
+//     const loseTitle = createElement('div', 'loseTitle');
+//     loseTitle.innerText = name + ' lose...';
+//     return loseTitle;
+// };
+
+function playerWins(name) {
+    const loseTitle = createElement('div', 'loseTitle');
+    loseTitle.innerText = name + ' wins!';
+    return loseTitle;
+};
+
+function draw() {
+    const loseTitle = createElement('div', 'loseTitle');
+    loseTitle.innerText = 'Draw!';
+    return loseTitle;
+};
+
+function changeHp(player) {
+    const playerLife = document.querySelector('.player' + player.player + ' .life');
+    player.hp -= Math.floor(Math.random() * 20) + 1;
+    
+    if(player.hp <= 0) {
+        player.hp = 0;
+        randomButton.disabled = true;
+    };
+
+    playerLife.style.width = player.hp + '%';
+    
+    console.log(player.hp);
+};
+
+function checkWin(player) {
+    if(player.hp <= 0) {
+        if(sonya.hp > kitana.hp) {
+            arenas.appendChild(playerWins(sonya.name));
+        } else if(sonya.hp < kitana.hp) {
+            arenas.appendChild(playerWins(kitana.name));
+        } else {
+            arenas.appendChild(draw());
+        };
+    };
+};
+
+arenas.appendChild(createPlayer(sonya));
+arenas.appendChild(createPlayer(kitana));
 
